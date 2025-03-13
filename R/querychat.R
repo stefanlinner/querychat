@@ -224,7 +224,9 @@ querychat_server <- function(id, querychat_config) {
     # chat model (but is actually hard-coded). This is just for the user, not for
     # the chat model to see.
     if (!is.null(greeting)) {
-      shinychat::chat_append(session$ns("chat"), greeting)
+      if (isTRUE(any(nzchar(greeting)))) {
+        shinychat::chat_append(session$ns("chat"), greeting)
+      }
     } else {
       shinychat::chat_append(
         session$ns("chat"),
