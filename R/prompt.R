@@ -40,8 +40,14 @@ df_to_schema <- function(df, name, categorical_threshold) {
         categories_str <- paste0("'", categories, "'", collapse = ", ")
         info <- c(info, paste0("  Categorical values: ", categories_str))
       }
+    } else if (sql_type %in% c("INTEGER", "FLOAT", "DATETIME")) {
+      rng <- range(df[[column]], na.rm = TRUE)
+      if (all(is.na(rng))) {
+        info <- c(info, "  Range: NULL to NULL")
+      } else {
+        info <- c(info, paste0("  Range: ", rng[1], " to ", rng[2]))
+      }
     }
-
     return(info)
   })
 
