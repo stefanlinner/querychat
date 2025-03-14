@@ -8,13 +8,24 @@
 #'   that will appear in SQL queries. Ensure that it begins with a letter, and
 #'   contains only letters, numbers, and underscores. By default, querychat will
 #'   try to infer a table name using the name of the `df` argument.
-#' @param system_prompt A string containing the system prompt for the chat model.
-#'   The default uses `querychat_system_prompt()` to generate a generic prompt.
 #' @param greeting A string in Markdown format, containing the initial message
 #'   to display to the user upon first loading the chatbot. If not provided, the
 #'   LLM will be invoked at the start of the conversation to generate one.
+#' @param data_description A string in plain text or Markdown format, containing
+#'   a description of the data frame or any additional context that might be
+#'   helpful in understanding the data. This will be included in the system
+#'   prompt for the chat model. If a `system_prompt` argument is provided, the
+#'   `data_description` argument will be ignored.
+#' @param extra_instructions A string in plain text or Markdown format, containing
+#'   any additional instructions for the chat model. These will be appended at
+#'   the end of the system prompt. If a `system_prompt` argument is provided,
+#'   the `extra_instructions` argument will be ignored.
 #' @param create_chat_func A function that takes a system prompt and returns a
 #'   chat object. The default uses `ellmer::chat_openai()`.
+#' @param system_prompt A string containing the system prompt for the chat model.
+#'   The default uses `querychat_system_prompt()` to generate a generic prompt,
+#'   which you can enhance via the `data_description` and `extra_instructions`
+#'   arguments.
 #'
 #' @returns An object that can be passed to `querychat_server()` as the
 #'   `querychat_config` argument. By convention, this object should be named
@@ -24,9 +35,11 @@
 querychat_init <- function(
   df,
   tbl_name = deparse(substitute(df)),
-  system_prompt = querychat_system_prompt(df, tbl_name),
   greeting = NULL,
-  create_chat_func = purrr::partial(ellmer::chat_openai, model = "gpt-4o")
+  data_description = NULL,
+  extra_instructions = NULL,
+  create_chat_func = purrr::partial(ellmer::chat_openai, model = "gpt-4o"),
+  system_prompt = querychat_system_prompt(df, tbl_name, data_description = data_description, extra_instructions = extra_instructions)
 ) {
   is_tbl_name_ok <- is.character(tbl_name) &&
     length(tbl_name) == 1 &&

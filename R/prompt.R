@@ -1,19 +1,27 @@
 #' @export
-querychat_system_prompt <- function(df, name, categorical_threshold = 10) {
+querychat_system_prompt <- function(df, name, data_description = NULL, extra_instructions = NULL, categorical_threshold = 10) {
   schema <- df_to_schema(df, name, categorical_threshold)
+
+  if (!is.null(data_description)) {
+    data_description <- paste(data_description, collapse = "\n")
+  }
+  if (!is.null(extra_instructions)) {
+    extra_instructions <- paste(extra_instructions, collapse = "\n")
+  }
 
   # Read the prompt file
   prompt_path <- system.file("prompt", "prompt.md", package = "querychat")
   prompt_content <- readLines(prompt_path, warn = FALSE)
   prompt_text <- paste(prompt_content, collapse = "\n")
 
-  # Replace the placeholder with the schema
-  prompt_text <- gsub("\\$\\{SCHEMA\\}", schema, prompt_text)
-
-  prompt_text
+  whisker::whisker.render(prompt_text, list(
+    schema = schema,
+    data_description = data_description,
+    extra_instructions = extra_instructions
+  ))
 }
 
-df_to_schema <- function(df, name, categorical_threshold) {
+df_to_schema <- function(df, name = deparse(substitute(df)), categorical_threshold) {
   schema <- c(paste("Table:", name), "Columns:")
 
   column_info <- lapply(names(df), function(column) {

@@ -25,4 +25,5 @@ Imports:
     rlang,
     shiny,
     shinychat,
+    whisker,
     xtable
