@@ -127,6 +127,7 @@ querychat_ui <- function(id) {
 #' - `title`: A reactive that returns the current title.
 #' - `df`: A reactive that returns the data frame, filtered and sorted by the
 #'   current SQL query.
+#' - `chat`: The [ellmer::Chat] object that powers the chat interface.
 #' 
 #' By convention, this object should be named `querychat_config`.
 #' 
@@ -259,6 +260,7 @@ querychat_server <- function(id, querychat_config) {
     })
 
     list(
+      chat = chat,
       sql = shiny::reactive(current_query()),
       title = shiny::reactive(current_title()),
       df = filtered_df
