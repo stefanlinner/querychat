@@ -93,7 +93,21 @@ querychat_init <- function(
   )
 }
 
-#' @rdname querychat_ui
+#' UI components for querychat
+#'
+#' These functions create UI components for the querychat interface.
+#' `querychat_ui` creates a basic chat interface, while `querychat_sidebar`
+#' wraps the chat interface in a `bslib::sidebar` component designed to be used
+#' as the `sidebar` argument to `bslib::page_sidebar`.
+#'
+#' @param id The ID of the module instance.
+#' @param width The width of the sidebar (when using `querychat_sidebar`).
+#' @param height The height of the sidebar (when using `querychat_sidebar`).
+#' @param ... Additional arguments passed to `bslib::sidebar` (when using `querychat_sidebar`).
+#'
+#' @return A UI object that can be embedded in a Shiny app.
+#'
+#' @name querychat_ui
 #' @export
 querychat_sidebar <- function(id, width = 400, height = "100%", ...) {
   bslib::sidebar(
@@ -104,6 +118,7 @@ querychat_sidebar <- function(id, width = 400, height = "100%", ...) {
   )
 }
 
+#' @rdname querychat_ui
 #' @export
 querychat_ui <- function(id) {
   ns <- shiny::NS(id)
@@ -144,7 +159,7 @@ querychat_server <- function(id, querychat_config) {
 
     current_title <- shiny::reactiveVal(NULL)
     current_query <- shiny::reactiveVal("")
-    filtered_df <- reactive({
+    filtered_df <- shiny::reactive({
       if (current_query() == "") {
         df
       } else {

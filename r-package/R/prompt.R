@@ -1,3 +1,16 @@
+#' Create a system prompt for the chat model
+#' 
+#' This function generates a system prompt for the chat model based on a data frame's
+#' schema and optional additional context and instructions.
+#'
+#' @param df A data frame to generate schema information from.
+#' @param name A string containing the name of the table in SQL queries.
+#' @param data_description Optional description of the data, in plain text or Markdown format.
+#' @param extra_instructions Optional additional instructions for the chat model, in plain text or Markdown format.
+#' @param categorical_threshold The maximum number of unique values for a text column to be considered categorical.
+#' 
+#' @return A string containing the system prompt for the chat model.
+#'
 #' @export
 querychat_system_prompt <- function(df, name, data_description = NULL, extra_instructions = NULL, categorical_threshold = 10) {
   schema <- df_to_schema(df, name, categorical_threshold)
