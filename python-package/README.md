@@ -18,33 +18,43 @@ pip install "querychat @ git+https://github.com/posit-dev/querychat?subdirectory
 
 First, you'll need access to an LLM that supports tools/function calling. querychat uses [chatlas](https://github.com/posit-dev/chatlas) to interface with various providers.
 
-Here's a minimal example:
+Here's a minimal example (see [examples/app.py](examples/app.py) for an unabridged version):
 
 ```python
-import pandas as pd
-from shiny import App, ui, reactive
+from pathlib import Path
+
+from seaborn import load_dataset
+from shiny import App, render, ui
+
 import querychat
 
-# 1. Configure querychat
-querychat_config = querychat.init(my_dataframe)
+titanic = load_dataset("titanic")
 
-# 2. Define the UI
+# 1. Configure querychat
+querychat_config = querychat.init(titanic, "titanic")
+
+# Create UI
 app_ui = ui.page_sidebar(
-    # Use the provided sidebar component
-    sidebar=querychat.sidebar("chat"),
-    ui.output_table("data_table")
+    # 2. Place the chat component in the sidebar
+    querychat.sidebar("chat"),
+    # Main panel with data viewer
+    ui.output_data_frame("data_table"),
+    title="querychat with Python",
+    fillable=True,
 )
 
-# 3. Define server logic
+
+# Define server logic
 def server(input, output, session):
-    # Initialize querychat server
+    # 3. Initialize querychat server with the config from step 1
     chat = querychat.server("chat", querychat_config)
-    
-    # Use the filtered dataframe
-    @output
-    @render.table
+
+    # 4. Display the filtered dataframe
+    @render.data_frame
     def data_table():
+        # Access filtered data via chat.df() reactive
         return chat["df"]()
+
 
 # Create Shiny app
 app = App(app_ui, server)
