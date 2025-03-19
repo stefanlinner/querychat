@@ -11,7 +11,7 @@ Imagine typing questions like these directly into your Shiny dashboard, and seei
 ## Installation
 
 ```bash
-pip install querychat
+pip install "querychat @ git+https://github.com/posit-dev/querychat?subdirectory=python-package"
 ```
 
 ## How to use
