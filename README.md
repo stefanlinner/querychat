@@ -15,6 +15,11 @@ Imagine typing questions like these directly into your dashboard, and seeing the
 
 querychat is a drop-in component for Shiny that allows users to query a data frame using natural language. The results are available as a reactive data frame, so they can be easily used from Shiny outputs, reactive expressions, downloads, etc.
 
+| ![Animation of a dashboard being filtered by a chatbot in the sidebar](animation.gif) |
+|-|
+
+[Live demo](https://jcheng.shinyapps.io/sidebot/)
+
 **This is not as terrible an idea as you might think!** We need to be very careful when bringing LLMs into data analysis, as we all know that they are prone to hallucinations and other classes of errors. querychat is designed to excel in reliability, transparency, and reproducibility by using this one technique: denying it raw access to the data, and forcing it to write SQL queries instead.
 
 ## How it works
