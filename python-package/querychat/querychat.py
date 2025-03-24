@@ -191,7 +191,7 @@ def init(
         greeting: A string in Markdown format, containing the initial message
         data_description: Description of the data in plain text or Markdown
         extra_instructions: Additional instructions for the chat model
-        create_chat_func: A function that creates a chat object
+        create_chat_callback: A function that creates a chat object
         system_prompt_override: A custom system prompt to use instead of the default
 
     Returns:
