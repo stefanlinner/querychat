@@ -136,7 +136,7 @@ def df_to_html(df: IntoFrame, maxrows: int = 5) -> str:
     df_short = nw.from_native(df).head(maxrows)
 
     # Generate HTML table
-    table_html = df_short.to_pandas().to_html(index=False)
+    table_html = df_short.to_pandas().to_html(index=False, classes="table table-striped")
 
     # Add note about truncated rows if needed
     if len(df_short) != len(ndf):
