@@ -12,7 +12,7 @@ Description: Adds an LLM-powered chatbot to your 'shiny' app, that can turn your
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.2.9000
 Imports: 
     bslib,
     DBI,
@@ -21,6 +21,7 @@ Imports:
     glue,
     htmltools,
     jsonlite,
+    promises,
     purrr,
     rlang,
     shiny,

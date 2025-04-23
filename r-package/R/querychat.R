@@ -30,7 +30,7 @@
 #' @returns An object that can be passed to `querychat_server()` as the
 #'   `querychat_config` argument. By convention, this object should be named
 #'   `querychat_config`.
-#' 
+#'
 #' @export
 querychat_init <- function(
   df,
@@ -130,22 +130,24 @@ querychat_ui <- function(id) {
 }
 
 #' Initalize the querychat server
-#' 
+#'
 #' @param id The ID of the module instance. Must match the ID passed to
 #'   the corresponding call to `querychat_ui()`.
 #' @param querychat_config An object created by `querychat_init()`.
-#' 
+#'
 #' @returns A querychat instance, which is a named list with the following
 #' elements:
-#' 
+#'
 #' - `sql`: A reactive that returns the current SQL query.
 #' - `title`: A reactive that returns the current title.
 #' - `df`: A reactive that returns the data frame, filtered and sorted by the
 #'   current SQL query.
 #' - `chat`: The [ellmer::Chat] object that powers the chat interface.
-#' 
+#'
 #' By convention, this object should be named `querychat_config`.
-#' 
+#'
+#' @importFrom promises %...>%
+#'
 #' @export
 querychat_server <- function(id, querychat_config) {
   shiny::moduleServer(id, function(input, output, session) {
@@ -262,7 +264,9 @@ querychat_server <- function(id, querychat_config) {
         chat$stream_async(
           "Please give me a friendly greeting. Include a few sample prompts in a two-level bulleted list."
         )
-      )
+      ) %...>% {
+        # print(chat)
+      }
     }
 
     # Handle user input
@@ -271,7 +275,9 @@ querychat_server <- function(id, querychat_config) {
       shinychat::chat_append(
         session$ns("chat"),
         chat$stream_async(input$chat_user_input)
-      )
+      ) %...>% {
+        # print(chat)
+      }
     })
 
     list(
