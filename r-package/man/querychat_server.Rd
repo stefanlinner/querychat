@@ -4,13 +4,15 @@
 \alias{querychat_server}
 \title{Initalize the querychat server}
 \usage{
-querychat_server(id, querychat_config)
+querychat_server(id, querychat_config, devmode = TRUE)
 }
 \arguments{
 \item{id}{The ID of the module instance. Must match the ID passed to
 the corresponding call to \code{querychat_ui()}.}
 
 \item{querychat_config}{An object created by \code{querychat_init()}.}
+
+\item{devmode}{logical, whether to use devmode or not.}
 }
 \value{
 A querychat instance, which is a named list with the following

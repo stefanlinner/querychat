@@ -33,13 +33,13 @@
 #'
 #' @export
 querychat_init <- function(
-  df,
-  tbl_name = deparse(substitute(df)),
-  greeting = NULL,
-  data_description = NULL,
-  extra_instructions = NULL,
-  create_chat_func = purrr::partial(ellmer::chat_openai, model = "gpt-4o"),
-  system_prompt = querychat_system_prompt(df, tbl_name, data_description = data_description, extra_instructions = extra_instructions)
+    df,
+    tbl_name = deparse(substitute(df)),
+    greeting = NULL,
+    data_description = NULL,
+    extra_instructions = NULL,
+    create_chat_func = purrr::partial(ellmer::chat_openai, model = "gpt-4o"),
+    system_prompt = querychat_system_prompt(df, tbl_name, data_description = data_description, extra_instructions = extra_instructions)
 ) {
   is_tbl_name_ok <- is.character(tbl_name) &&
     length(tbl_name) == 1 &&
@@ -134,6 +134,7 @@ querychat_ui <- function(id) {
 #' @param id The ID of the module instance. Must match the ID passed to
 #'   the corresponding call to `querychat_ui()`.
 #' @param querychat_config An object created by `querychat_init()`.
+#' @param devmode logical, whether to use devmode or not.
 #'
 #' @returns A querychat instance, which is a named list with the following
 #' elements:
@@ -146,10 +147,8 @@ querychat_ui <- function(id) {
 #'
 #' By convention, this object should be named `querychat_config`.
 #'
-#' @importFrom promises %...>%
-#'
 #' @export
-querychat_server <- function(id, querychat_config) {
+querychat_server <- function(id, querychat_config, devmode = TRUE) {
   shiny::moduleServer(id, function(input, output, session) {
     # 🔄 Reactive state/computation --------------------------------------------
 
@@ -186,7 +185,10 @@ querychat_server <- function(id, querychat_config) {
     # @param title A title to display at the top of the data dashboard,
     #   summarizing the intent of the SQL query.
     update_dashboard <- function(query, title) {
-      append_output("\n```sql\n", query, "\n```\n\n")
+
+      if(devmode){
+        append_output("\n```sql\n", query, "\n```\n\n")
+      }
 
       tryCatch(
         {
@@ -211,8 +213,11 @@ querychat_server <- function(id, querychat_config) {
     # @param query A DuckDB SQL query; must be a SELECT statement.
     # @return The results of the query as a JSON string.
     query <- function(query) {
+
       # Do this before query, in case it errors
-      append_output("\n```sql\n", query, "\n```\n\n")
+      if(devmode){
+        append_output("\n```sql\n", query, "\n```\n\n")
+      }
 
       tryCatch(
         {
@@ -264,9 +269,7 @@ querychat_server <- function(id, querychat_config) {
         chat$stream_async(
           "Please give me a friendly greeting. Include a few sample prompts in a two-level bulleted list."
         )
-      ) %...>% {
-        # print(chat)
-      }
+      )
     }
 
     # Handle user input
@@ -275,9 +278,7 @@ querychat_server <- function(id, querychat_config) {
       shinychat::chat_append(
         session$ns("chat"),
         chat$stream_async(input$chat_user_input)
-      ) %...>% {
-        # print(chat)
-      }
+      )
     })
 
     list(
