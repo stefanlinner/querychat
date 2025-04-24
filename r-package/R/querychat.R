@@ -197,9 +197,7 @@ querychat_server <- function(id, querychat_config, devmode = TRUE) {
           DBI::dbGetQuery(conn, query)
         },
         error = function(err) {
-          if(devmode){
-            append_output("> Error: ", conditionMessage(err), "\n\n")
-          }
+          append_output("> Error: ", conditionMessage(err), "\n\n")
           stop(err)
         }
       )
@@ -227,9 +225,7 @@ querychat_server <- function(id, querychat_config, devmode = TRUE) {
           df <- DBI::dbGetQuery(conn, query)
         },
         error = function(e) {
-          if(devmode){
-            append_output("> Error: ", conditionMessage(e), "\n\n")
-          }
+          append_output("> Error: ", conditionMessage(e), "\n\n")
           stop(e)
         }
       )
@@ -274,13 +270,6 @@ querychat_server <- function(id, querychat_config, devmode = TRUE) {
           "All filter conditions used in the SQL query.",
           .additional_properties = TRUE
         )
-        # ellmer::type_array(
-        #   "A list of filters to apply to the data dashboard. Each element represents the filters of a single column.",
-        #   items = ellmer::type_array(
-        #     "A character vector of filter values for a single column.",
-        #     items = ellmer::type_string()
-        #   )
-        # )
     ))
 
     # Prepopulate the chat UI with a welcome message that appears to be from the
