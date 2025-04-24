@@ -38,7 +38,7 @@ querychat_init <- function(
     greeting = NULL,
     data_description = NULL,
     extra_instructions = NULL,
-    create_chat_func = purrr::partial(ellmer::chat_openai, model = "gpt-4o"),
+    create_chat_func = purrr::partial(ellmer::chat_claude, model = "claude-3-5-sonnet-latest"),
     system_prompt = querychat_system_prompt(df, tbl_name, data_description = data_description, extra_instructions = extra_instructions)
 ) {
   is_tbl_name_ok <- is.character(tbl_name) &&
@@ -270,13 +270,17 @@ querychat_server <- function(id, querychat_config, devmode = TRUE) {
       update_filters,
       "Updates the filters for the data dashboard by modifying the filter list.",
       filter_list =
-        ellmer::type_array(
-          "A list of filters to apply to the data dashboard. Each element represents the filters of a single column.",
-          items = ellmer::type_array(
-            "A character vector of filter values for a single column.",
-            items = ellmer::type_string()
-          )
+        ellmer::type_object(
+          "All filter conditions used in the SQL query.",
+          .additional_properties = TRUE
         )
+        # ellmer::type_array(
+        #   "A list of filters to apply to the data dashboard. Each element represents the filters of a single column.",
+        #   items = ellmer::type_array(
+        #     "A character vector of filter values for a single column.",
+        #     items = ellmer::type_string()
+        #   )
+        # )
     ))
 
     # Prepopulate the chat UI with a welcome message that appears to be from the
