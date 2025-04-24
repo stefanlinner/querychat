@@ -271,9 +271,9 @@ querychat_server <- function(id, querychat_config, devmode = TRUE) {
       "Updates the filters for the data dashboard by modifying the filter list.",
       filter_list =
         ellmer::type_array(
-          "A list of filters to apply to the data dashboard. Each element represents the filters of a single column."
+          "A list of filters to apply to the data dashboard. Each element represents the filters of a single column.",
           items = ellmer::type_array(
-            "A character vector of filter values for a single column."
+            "A character vector of filter values for a single column.",
             items = ellmer::type_string()
           )
         )
