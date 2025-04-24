@@ -160,6 +160,7 @@ querychat_server <- function(id, querychat_config, devmode = TRUE) {
 
     current_title <- shiny::reactiveVal(NULL)
     current_query <- shiny::reactiveVal("")
+    current_filters <- shiny::reactiveVal(NULL)
     filtered_df <- shiny::reactive({
       if (current_query() == "") {
         df
@@ -196,7 +197,9 @@ querychat_server <- function(id, querychat_config, devmode = TRUE) {
           DBI::dbGetQuery(conn, query)
         },
         error = function(err) {
-          append_output("> Error: ", conditionMessage(err), "\n\n")
+          if(devmode){
+            append_output("> Error: ", conditionMessage(err), "\n\n")
+          }
           stop(err)
         }
       )
@@ -224,15 +227,23 @@ querychat_server <- function(id, querychat_config, devmode = TRUE) {
           df <- DBI::dbGetQuery(conn, query)
         },
         error = function(e) {
-          append_output("> Error: ", conditionMessage(e), "\n\n")
+          if(devmode){
+            append_output("> Error: ", conditionMessage(e), "\n\n")
+          }
           stop(e)
         }
       )
 
-      tbl_html <- df_to_html(df, maxrows = 5)
-      append_output(tbl_html, "\n\n")
+      if(devmode){
+        tbl_html <- df_to_html(df, maxrows = 5)
+        append_output(tbl_html, "\n\n")
+      }
 
       df |> jsonlite::toJSON(auto_unbox = TRUE)
+    }
+
+    update_filters <- function(filter_list) {
+      current_filters(filter_list)
     }
 
     # Preload the conversation with the system prompt. These are instructions for
@@ -254,6 +265,18 @@ querychat_server <- function(id, querychat_config, devmode = TRUE) {
       query = ellmer::type_string(
         "A DuckDB SQL query; must be a SELECT statement."
       )
+    ))
+    chat$register_tool(ellmer::tool(
+      update_filters,
+      "Updates the filters for the data dashboard by modifying the filter list.",
+      filter_list =
+        ellmer::type_array(
+          "A list of filters to apply to the data dashboard. Each element represents the filters of a single column."
+          items = ellmer::type_array(
+            "A character vector of filter values for a single column."
+            items = ellmer::type_string()
+          )
+        )
     ))
 
     # Prepopulate the chat UI with a welcome message that appears to be from the
@@ -285,7 +308,8 @@ querychat_server <- function(id, querychat_config, devmode = TRUE) {
       chat = chat,
       sql = shiny::reactive(current_query()),
       title = shiny::reactive(current_title()),
-      df = filtered_df
+      df = filtered_df,
+      filters = shiny::reactive(current_filters())
     )
   })
 }
