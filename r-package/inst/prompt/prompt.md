@@ -30,6 +30,7 @@ Finally, call the tool `update_filters`, passing the filter list that was used t
 * The filter value should be a SQL expression that can be used in a WHERE clause. 
 * For example, if the user wants to filter the column `x` to show only values greater than 10, you would set `filter_list` to `{x: "> 10"}`. If the user wants `y` to be in a set of values, you would set `filter_list` to `{y: "IN ('A', 'B', 'C')"}`. If the user wants to filter `x` to be between 10 and 20, you would set `filter_list` to `{x: "BETWEEN 10 AND 20"}`.
 * In the filter list should only appear actual values of the respective column. For example, if the user wants to filter the column `x` to show values greater than the average value of `x`, you should NOT set the `filter_list` to `{x: "> AVG(x)"}`. Instead, you should use a subquery to calculate the average value of `x` in the SQL query itself, and set the filter list to `{x: "> 14.5"}`. If you cannot extract the filter value, ignore this filter condition.
+* Whenever possible, try use a single column only once in the `WHERE`-clause. For example, for the filter `x > 10 AND x < 20`, you should use `BETWEEN` instead, and set the filter list to `{x: "BETWEEN 10 AND 20"}`.
 * Sorting actions do not need to be saved, thus, you do not need to handle sorting in `update_filters`.
 
 * **Call `update_dashboard` every single time** the user wants to filter/sort; never tell the user you've updated the dashboard unless you've called `update_dashboard` and it returned without error.
