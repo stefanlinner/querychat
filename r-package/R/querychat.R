@@ -291,10 +291,24 @@ querychat_server <- function(id, querychat_config, devmode = TRUE) {
     # Handle user input
     shiny::observeEvent(input$chat_user_input, {
       # Add user message to the chat history
-      shinychat::chat_append(
+      promise <- shinychat::chat_append(
         session$ns("chat"),
         chat$stream_async(input$chat_user_input)
       )
+
+      # Handle any errors that occur during the chat processing
+      promises::catch(promise, function(error) {
+        # Display a notification to the user
+        shiny::showNotification(
+          "Bei der Kommunikation mit der KI ist leider ein Fehler aufgetreten. Bitte versuchen Sie es später erneut.",
+          type = "error",
+          duration = 10
+        )
+
+        # log the actual error for debugging
+        message("Chat error: ", conditionMessage(error))
+      })
+
     })
 
     list(

@@ -10,7 +10,8 @@ querychat_init(
   greeting = NULL,
   data_description = NULL,
   extra_instructions = NULL,
-  create_chat_func = purrr::partial(ellmer::chat_openai, model = "gpt-4o"),
+  create_chat_func = purrr::partial(ellmer::chat_claude, model =
+    "claude-3-5-sonnet-latest"),
   system_prompt = querychat_system_prompt(df, tbl_name, data_description =
     data_description, extra_instructions = extra_instructions)
 )

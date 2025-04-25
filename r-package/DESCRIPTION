@@ -21,6 +21,7 @@ Imports:
     glue,
     htmltools,
     jsonlite,
+    promises,
     purrr,
     rlang,
     shiny,
