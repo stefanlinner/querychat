@@ -290,12 +290,37 @@ querychat_server <- function(id, querychat_config, devmode = TRUE) {
 
     # Handle user input
     shiny::observeEvent(input$chat_user_input, {
-      shinychat::chat_append(
-        session$ns("chat"),
-        chat$stream_async(
-          input$chat_user_input
+      # Use tryCatch to handle any errors that might occur during API calls
+      tryCatch({
+        # Store the promise returned by chat_append with token limit
+        promise <- shinychat::chat_append(
+          session$ns("chat"),
+          chat$stream_async(
+            input$chat_user_input
+          )
         )
-      )
+
+        # Handle any errors that occur during the chat processing
+        promises::catch(promise, function(error) {
+          # Display a notification to the user
+          shiny::showNotification(
+            "Bei der Kommunikation mit der KI ist leider ein Fehler aufgetreten. Bitte versuchen Sie es später erneut.",
+            type = "error",
+            duration = 10
+          )
+
+          # Log the error for debugging
+          message("Chat error: ", conditionMessage(error))
+        })
+      }, error = function(e) {
+        # This catches errors that might occur before the promise is even created
+        shiny::showNotification(
+          "Bei der Kommunikation mit der KI ist leider ein Fehler aufgetreten. Bitte versuchen Sie es später erneut.",
+          type = "error",
+          duration = 10
+        )
+        message("Pre-promise error: ", conditionMessage(e))
+      })
     })
 
     list(
