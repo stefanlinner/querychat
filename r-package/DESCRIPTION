@@ -19,6 +19,7 @@ Imports:
     duckdb,
     ellmer,
     glue,
+    here,
     htmltools,
     jsonlite,
     promises,

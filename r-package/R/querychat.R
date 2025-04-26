@@ -77,7 +77,9 @@ querychat_init <- function(
     ))
   }
 
-  conn <- DBI::dbConnect(duckdb::duckdb(), dbdir = ":memory:")
+  conn <- DBI::dbConnect(duckdb::duckdb(), dbdir = here::here("files")
+                           # ":memory:"
+                         )
   duckdb::duckdb_register(conn, tbl_name, df, experimental = FALSE)
   shiny::onStop(function() DBI::dbDisconnect(conn))
 
